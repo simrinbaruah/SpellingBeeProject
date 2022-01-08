@@ -1,0 +1,50 @@
+{% load static %}
+<html>
+	<head>
+		<title> My WebPage </title>
+		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+		<style>
+			p.firstPara{
+				color: blue;
+			}
+		</style>
+		<script src="{% static 'js/myscript.js' %}"></script>
+	</head>
+	<body style="background-color: skyblue;">
+		<h1 align="center" class="firstPara">Hello World</h1>
+		<p class="firstPara" style="color: green;">This is a paragraph</p>
+		<img src="{% static 'img/Spring Poster.png' %}" id="pic">
+		<img src="{% static 'img/dog.jpg' %}" class="dogImage">
+		<form>
+			<input type="text" placeholder="Username" class="textfield">
+			<br><br>
+			<input type="password" placeholder="Password" class="textfield">
+			<input type="submit" value="LOG IN">
+		</form>
+
+		<p id="demo">Hello</p>
+		<button onclick="myFunction()">Click Me</button>
+		<button onclick="myFunction2()">Show/Hide</button>
+		<button onclick="myFunction3()">Img</button>
+
+		<table>
+			<tr>
+			<th>Name</th> 
+			<th>Age</th>
+			</tr>
+			<tr>
+				<td>Alexander</td>
+				<td>23</td>
+			</tr>
+		</table>
+
+		<ul>
+			<li>Milk</li>
+			<li>Butter</li>
+		</ul>
+		<ol type='a' start=4>
+			<li>Milk</li>
+			<li>Butter</li>
+		</ol>
+	</body>
+</html>
