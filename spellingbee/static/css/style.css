@@ -1,11 +1,5 @@
-form{
-	float: left;
-}
-input.textfield{
-	width: 100px;
-	padding: 10px;
-	border-radius: 10px;
-}
+
+
 img {
 	width: 100px;
 	height: 100px;
@@ -38,4 +32,51 @@ td:first-child, th:first-child{
 
 th{
 	border-top: none;
+}
+
+body{
+margin:0;
+}
+
+ul.topNavBar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #1a1c2b;
+}
+
+ul.topNavBar>li {
+  display: inline;
+  float: right;
+}
+
+li>a {
+  text-decoration: none;
+  display: block;
+  padding: 20px;
+  text-align: center;
+  color: white;
+}
+
+li a:hover {
+  background-color: #000000;
+}
+
+div.accDiv{
+    text-align: center;
+}
+
+input[type="text"]{
+	width: 30%;
+	padding:10px;
+	margin-bottom: 10px;
+	border-radius: 10px;
+}
+
+input[type="password"]{
+	width: 30%;
+	padding:10px;
+	margin-bottom: 10px;
+	border-radius: 10px;
 }

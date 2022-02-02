@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+<html>
+	<head>
+		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+	</head>
+    <body>
+    {% block content %}
+    <div class="accDiv">
+    <h1>Register</h1>
+    <form method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
+        <input type="text" placeholder="Username" name="username"><br>
+  <input type="text" placeholder="Email" name="email"><br>
+  <input type="password" placeholder="Password" name="password1"><br>
+  <input type="password" placeholder="Confirm Password" name="password2"><br>
+        <br>
+  <input type="submit" value="Register">
+        <p style="text-align: center;">
+            or
+        </p>
+        <a href = "{% provider_login_url 'google' %}">
+            <input type="button"  value="Register using Gmail">
+        </a>
+</form>
+        {% if message %}
+        {{message}}
+        {% endif %}
+</div>
+    {%endblock%}
+    </body>
