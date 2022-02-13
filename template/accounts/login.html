@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load socialaccount %}
 <html>
 	<head>
 		<link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -17,7 +17,9 @@
         <p style="text-align: center;">
             or
         </p>
-        <input type="button" value="Login using Gmail">
+        <a href = "{% provider_login_url 'google' %}">
+            <input type="button"  value="Continue with Gmail">
+        </a>
 </form>
         {% if message %}
             {{message}}
