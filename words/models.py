@@ -20,3 +20,9 @@ class Word(models.Model):
     class Meta:
         managed = False
         db_table = 'words'
+
+class AudioStore(models.Model):
+    sound = models.FileField(upload_to='\documents')
+
+    def __str__(self):
+        return 'SOUND'

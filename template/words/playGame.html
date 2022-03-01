@@ -1,4 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
-Play Game
+<audio controls>
+    <source src={{sendvals.sound.sound.url}} type="audio/mpeg">
+    Your browser does not support the audio
+</audio>
+<br>
+<form action="{% url 'option' %}" method="POST">
+    {% csrf_token %}
+ Choose an option:
+<select name="dropdown">
+    <option value="repeat">Repeat Word</option>
+    <option value="definition">Definition</option>
+    <option value="example_1">Example 1</option>
+    <option value="example_2">Example 2</option>
+    <option value="origination">Origination</option>
+    <option value="part_of_speech">Part of Speech</option>
+</select>
+<input type="submit" value="Go">
+<br>
+    Type your answer:
+    <input type="text" placeholder="Answer" name="answer">
+    <input type="submit" value="Submit Answer">
+</form>
 {% endblock %}
