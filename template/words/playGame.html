@@ -20,6 +20,15 @@
 <br>
     Type your answer:
     <input type="text" placeholder="Answer" name="answer">
-    <input type="submit" value="Submit Answer">
+    <input type="submit" value="Submit Answer" formaction="{% url 'check' %}">
 </form>
+<br>
+{% if sendvals.result %}
+    {{sendvals.result}}
+{% endif %}
+<br>
+{% if sendvals.score %}
+Score:
+    {{sendvals.score}}
+{% endif %}
 {% endblock %}
