@@ -68,3 +68,6 @@ def send_mail_after_registration(to_email, auth_token):
     message = f'Your link for email verification is http://127.0.0.1:8000/accounts/verify/{auth_token}'
     from_email = settings.EMAIL_HOST_USER
     send_mail(subject, message, from_email, [to_email])
+
+def profile(request):
+    return render(request, 'accounts/profile.html')

@@ -6,5 +6,6 @@ urlpatterns = [
     path('register', views.register, name='register'),
     path('auth/', include('allauth.urls')),
     path('token_send', views.token, name='token'),
-    path('verify/<auth_token>', views.verify, name='verify')
+    path('verify/<auth_token>', views.verify, name='verify'),
+    path('profile', views.profile, name='profile')
 ]

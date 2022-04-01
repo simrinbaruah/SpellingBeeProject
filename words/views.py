@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Word, AudioStore
+from .models import *
 from gtts import gTTS
 import random
 from spellingbee import settings
@@ -26,6 +26,7 @@ def play(request):
         request.session['selectedWord'] = word
         request.session['score'] = 0
         request.session['wordList'] = list(wordList)
+        request.session['wordCount'] = 1
         sound = convertAudio(word)
         sendvals = {
             'sound' : sound
@@ -54,9 +55,28 @@ def check(request):
         answer = request.POST['answer']
         word = request.session['selectedWord']
         result = 'Wrong Answer!'
+        wordCount = request.session['wordCount']
+        request.session['wordCount'] += 1
+        try:
+            correct_word_obj = CorrectWord.objects.get(user=request.user, word=word)
+        except:
+            correct_word_obj = CorrectWord.objects.create(user=request.user, word=word)
         if word.lower() == answer.lower():
             result = 'Correct Answer!'
             request.session['score'] += 1
+            try:
+                score_obj = Score.objects.get(username=request.user)
+                score_obj.score += 1
+                score_obj.save()
+            except:
+                score_obj = Score.objects.create(username=request.user, score=request.session['score'])
+                score_obj.save()
+
+            correct_word_obj.correct += 1
+            correct_word_obj.save()
+        else:
+            correct_word_obj.incorrect += 1
+            correct_word_obj.save()
         wordList = request.session['wordList']
         selected = random.choice(wordList)
         word = selected['word']
@@ -66,7 +86,8 @@ def check(request):
         sendvals = {
             'sound': sound,
             'result' : result,
-            'score' : score
+            'score' : score,
+            'wordCount' : wordCount
         }
         return render(request, 'words/playGame.html', {'sendvals':sendvals})
 

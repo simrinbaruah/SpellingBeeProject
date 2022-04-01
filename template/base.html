@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <title>Spelling Bee</title>
     <link rel="stylesheet" href = "{% static 'css/style.css' %}">
+    <script src = "{% static 'js/myscript.js' %}"></script>
 </head>
 <body>
 <ul class="topNavBar">
     {% if user.is_authenticated %}
         <li><a href="{% url 'account_logout' %}">Logout</a></li>
+        <li><a href="{% url 'profile' %}">Profile</a></li>
     {% else %}
     <li><a href = "{% url 'login' %}">Login</a></li>
     <li><a href = "{% url 'register' %}">Register</a></li>

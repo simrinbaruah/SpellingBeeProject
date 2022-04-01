@@ -5,7 +5,7 @@
     Your browser does not support the audio
 </audio>
 <br>
-<form action="{% url 'option' %}" method="POST">
+<form id="playGameForm" action="{% url 'option' %}" method="POST" autocomplete ="off" spellcheck="false">
     {% csrf_token %}
  Choose an option:
 <select name="dropdown">
@@ -19,8 +19,8 @@
 <input type="submit" value="Go">
 <br>
     Type your answer:
-    <input type="text" placeholder="Answer" name="answer">
-    <input type="submit" value="Submit Answer" formaction="{% url 'check' %}">
+    <input type="text" placeholder="Answer" name="answer" id="answerBox" onkeypress='checkEnter(event)'>
+    <input type="submit" value="Submit Answer" formaction = "{% url 'check' %}">
 </form>
 <br>
 {% if sendvals.result %}
@@ -29,6 +29,6 @@
 <br>
 {% if sendvals.score %}
 Score:
-    {{sendvals.score}}
+    {{sendvals.score}}/{{sendvals.wordCount}}
 {% endif %}
 {% endblock %}

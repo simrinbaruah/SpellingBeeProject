@@ -1,3 +1,12 @@
+document.getElementById('answerBox').addEventListener("keypress", checkEnter);
+
+function checkEnter(event){
+    if(event.keyCode == 13){
+        element = document.getElementById('playGameForm');
+        element.action = 'check';
+    }
+}
+
 function myFunction(){
 	element=document.getElementById('demo')
 	if(element.innerHTML=="Hello"){
