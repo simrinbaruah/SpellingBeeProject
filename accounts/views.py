@@ -5,6 +5,7 @@ import uuid
 from accounts.models import Profile
 from django.core.mail import send_mail
 from django.conf import settings
+from words.models import Score, CorrectWord
 
 # Create your views here.
 def login(request):
@@ -13,10 +14,14 @@ def login(request):
     if request.method == 'POST':
         user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
         if user is not None:
-            profile_obj = Profile.objects.get(user=user)
-            if not profile_obj.is_verified:
-                return render(request, 'accounts/login.html', {'message':'Your account is not verified. Check your email.'})
-            else:
+            try:
+                profile_obj = Profile.objects.get(user=user)
+                if not profile_obj.is_verified:
+                    return render(request, 'accounts/login.html', {'message':'Your account is not verified. Check your email.'})
+                else:
+                    auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                    return redirect('index')
+            except:
                 auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return redirect('index')
         else:
@@ -70,4 +75,32 @@ def send_mail_after_registration(to_email, auth_token):
     send_mail(subject, message, from_email, [to_email])
 
 def profile(request):
-    return render(request, 'accounts/profile.html')
+    scoreObj = Score.objects.filter(username = request.user).values('score')
+    correctWordObj = CorrectWord.objects.filter(user = request.user)
+    sendvals = {
+        'scoreObj': scoreObj,
+        'correctWordObj':correctWordObj
+    }
+    return render(request, 'accounts/profile.html', {'sendvals': sendvals})
+
+def send_mail_for_reset_password(userEmail, auth_token):
+    subject = 'Spelling Bee: Reset Password'
+    message = f'Your link for resetting password is http://127.0.0.1:8000/accounts/reset/{userEmail}/{auth_token}'
+    from_email = settings.EMAIL_HOST_USER
+    send_mail(subject, message, from_email, [userEmail])
+
+def forgot_password(request):
+    if request.method == 'POST':
+      userEmail = request.POST['email']
+      try:
+        User.objects.get(email=userEmail)
+      except User.DoesNotExist:
+          return render(request, "accounts/forgot_password.html", {'message':'Your account has not been registered.'})
+      auth_token = str(uuid.uuid4())
+      send_mail_for_reset_password(userEmail, auth_token)
+      return render(request, 'accounts/email_sent.html')
+    else:
+        return render(request, 'accounts/forgot_password.html')
+
+def email_sent(request):
+    return render(request, 'accounts/email_sent.html')

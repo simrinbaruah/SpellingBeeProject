@@ -7,5 +7,7 @@ urlpatterns = [
     path('auth/', include('allauth.urls')),
     path('token_send', views.token, name='token'),
     path('verify/<auth_token>', views.verify, name='verify'),
-    path('profile', views.profile, name='profile')
+    path('profile', views.profile, name='profile'),
+    path('forgot_password', views.forgot_password, name='forgot_password'),
+    path('email_sent', views.email_sent, name='email_sent')
 ]

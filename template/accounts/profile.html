@@ -1,4 +1,24 @@
 {% extends 'base.html' %}
 {% block content %}
-PROFILE
+{% if user.is_authenticated %}
+    <p> Username: {{user.username}} </p>
+    <p> Email: {{user.email}}
+{% endif %}
+
+{%if sendvals %}
+<p>Score:
+    {% for score in sendvals.scoreObj %}
+        {{score.score}}
+    {% endfor %}
+    </p>
+    <p>Words Played:
+        <br>
+    {% for correctWord in sendvals.correctWordObj %}
+        {{correctWord.word}} <br>
+        Correct: {{correctWord.correct}} <br>
+        Incorrect: {{correctWord.incorrect}} <br> <br>
+    {% endfor %}
+        </p>
+{% endif %}
+
 {% endblock %}
