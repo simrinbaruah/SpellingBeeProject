@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import auth
 import uuid
-from accounts.models import Profile
+from accounts.models import Profile, ValidLink
 from django.core.mail import send_mail
 from django.conf import settings
 from words.models import Score, CorrectWord
@@ -85,9 +85,30 @@ def profile(request):
 
 def send_mail_for_reset_password(userEmail, auth_token):
     subject = 'Spelling Bee: Reset Password'
-    message = f'Your link for resetting password is http://127.0.0.1:8000/accounts/reset/{userEmail}/{auth_token}'
+    message = f'Your link for resetting password is http://127.0.0.1:8000/accounts/reset/{auth_token}'
     from_email = settings.EMAIL_HOST_USER
     send_mail(subject, message, from_email, [userEmail])
+
+def reset(request, auth_token):
+    try:
+        ValidLink.objects.get(unique_code = auth_token)
+    except:
+        return render(request, "accounts/forgot_password.html", {'error':'The link is invalid. Please try again.'})
+    valid_link_obj = ValidLink.objects.get(unique_code = auth_token)
+    valid_link_obj.delete()
+    return render(request, "accounts/password_reset_form.html")
+
+def password_reset_done(request):
+    if request.method == 'POST':
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if password1 == password2:
+            userEmail = request.session['userEmail']
+            user = User.objects.get(email=userEmail)
+            user.set_password(password1)
+            user.save()
+            return render(request, "accounts/login.html", {'message':'Password has been reset.'})
+        return render(request, "accounts/password_reset_form.html", {'message':'Password do not match!'})
 
 def forgot_password(request):
     if request.method == 'POST':
@@ -97,6 +118,9 @@ def forgot_password(request):
       except User.DoesNotExist:
           return render(request, "accounts/forgot_password.html", {'message':'Your account has not been registered.'})
       auth_token = str(uuid.uuid4())
+      valid_link_obj = ValidLink.objects.create(unique_code = auth_token)
+      valid_link_obj.save()
+      request.session['userEmail'] = userEmail
       send_mail_for_reset_password(userEmail, auth_token)
       return render(request, 'accounts/email_sent.html')
     else:

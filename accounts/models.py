@@ -7,3 +7,6 @@ class Profile(models.Model):
     auth_token = models.CharField(max_length=100)
     is_verified = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
+
+class ValidLink(models.Model):
+    unique_code = models.CharField(max_length=100)
