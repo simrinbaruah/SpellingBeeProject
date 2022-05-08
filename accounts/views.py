@@ -12,12 +12,37 @@ def login(request):
     if request.user.is_authenticated:
         return redirect('index')
     if request.method == 'POST':
-        user = auth.authenticate(username=request.POST['username'], password=request.POST['password'])
+        try:
+            User.objects.get(username=request.POST['user_or_email'])
+        except:
+            try:
+                User.objects.get(email=request.POST['user_or_email'])
+            except:
+                return render(request, 'accounts/login.html', {'message':'account does not exist.'})
+            user =  User.objects.filter(email=request.POST['user_or_email']).values('username')
+            username = user[0]['username']
+            user = auth.authenticate(username=username, password=request.POST['password'])
+            if user is not None:
+                try:
+                    profile_obj = Profile.objects.get(user=user)
+                    if not profile_obj.is_verified:
+                        return render(request, 'accounts/login.html',
+                                      {'message': 'Your account is not verified. Check your email.'})
+                    else:
+                        auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                        return redirect('index')
+                except:
+                    auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                    return redirect('index')
+            else:
+                return render(request, 'accounts/login.html', {'message': 'Invalid username/email or password'})
+        user = auth.authenticate(username=request.POST['user_or_email'], password=request.POST['password'])
         if user is not None:
             try:
                 profile_obj = Profile.objects.get(user=user)
                 if not profile_obj.is_verified:
-                    return render(request, 'accounts/login.html', {'message':'Your account is not verified. Check your email.'})
+                    return render(request, 'accounts/login.html',
+                                  {'message': 'Your account is not verified. Check your email.'})
                 else:
                     auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     return redirect('index')
@@ -25,9 +50,54 @@ def login(request):
                 auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return redirect('index')
         else:
-            return render(request, 'accounts/login.html', {'message':'Invalid username/password!'})
+            return render(request, 'accounts/login.html', {'message': 'Invalid username/email or password'})
     else:
         return render(request, 'accounts/login.html')
+
+# def login(request):
+#     if request.user.is_authenticated:
+#         return redirect('index')
+#     if request.method == 'POST':
+#         try:
+#             User.objects.get(username=request.POST['user_or_email'])
+#         except:
+#             try:
+#                 User.objects.get(email=request.POST['user_or_email'])
+#             except:
+#                 return render(request, 'accounts/login.html', {'message':'Account does not exist'})
+#             user = User.objects.filter(email=request.POST['user_or_email']).values('username')
+#             username = user[0]['username']
+#             user = auth.authenticate(username=username, password=request.POST['password'])
+#             if user is not None:
+#                 try:
+#                     profile_obj = Profile.objects.get(user=user)
+#                     if not profile_obj.is_verified:
+#                         return render(request, 'accounts/login.html',
+#                                       {'message': 'Your account is not verified. Check your email.'})
+#                     else:
+#                         auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+#                         return redirect('index')
+#                 except:
+#                     auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+#                     return redirect('index')
+#         user = auth.authenticate(username=request.POST['user_or_email'], password=request.POST['password'])
+#         if user is not None:
+#             try:
+#                 profile_obj = Profile.objects.get(user=user)
+#                 if not profile_obj.is_verified:
+#                     return render(request, 'accounts/login.html',
+#                                   {'message': 'Your account is not verified. Check your email.'})
+#                 else:
+#                     auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+#                     return redirect('index')
+#             except:
+#                 auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+#                 return redirect('index')
+#         else:
+#             return render(request, 'accounts/login.html', {'message': 'Invalid username/email or password!'})
+#     else:
+#         return render(request, 'accounts/login.html')
+
 
 def register(request):
     if request.user.is_authenticated:
@@ -114,8 +184,9 @@ def forgot_password(request):
     if request.method == 'POST':
       userEmail = request.POST['email']
       try:
-        User.objects.get(email=userEmail)
-      except User.DoesNotExist:
+        user = User.objects.get(email=userEmail)
+        Profile.objects.get(user=user)
+      except:
           return render(request, "accounts/forgot_password.html", {'message':'Your account has not been registered.'})
       auth_token = str(uuid.uuid4())
       valid_link_obj = ValidLink.objects.create(unique_code = auth_token)

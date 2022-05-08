@@ -11,7 +11,7 @@
     <h1>Login</h1>
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
-  <input type="text" placeholder="Username" name="username"><br>
+  <input type="text" placeholder="Username/Email" name="user_or_email"><br>
   <input type="password" placeholder="Password" name="password"><br><br>
   <input type="submit" value="Login">
         <a href = "{% url 'forgot_password' %}">
